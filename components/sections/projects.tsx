@@ -243,8 +243,9 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
               <p className="text-muted-foreground leading-relaxed pl-10">{project.design}</p>
             </section>
 
-            {/* Design Decision Callout - Neon border */}
-            <section className="relative border border-chart-1/40 bg-chart-1/5 p-6 ml-10">
+            {/* Design Decision Callouts - Neon border */}
+            {(project.designDecisions ?? [project.designDecision]).map((dd, ddIndex) => (
+            <section key={ddIndex} className="relative border border-chart-1/40 bg-chart-1/5 p-6 ml-10">
               {/* Corner accents */}
               <div className="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-chart-1" />
               <div className="absolute top-0 right-0 w-4 h-4 border-r-2 border-t-2 border-chart-2" />
@@ -252,16 +253,17 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
               <div className="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-chart-1" />
               
               <p className="text-chart-1 text-xs font-mono uppercase tracking-widest mb-3">
-                {'// KEY_DECISION'}
+                {`// KEY_DECISION${(project.designDecisions?.length ?? 0) > 1 ? `_${String(ddIndex + 1).padStart(2, '0')}` : ''}`}
               </p>
-              <h3 className="font-serif text-xl mb-4 text-gradient">{project.designDecision.title}</h3>
+              <h3 className="font-serif text-xl mb-4 text-gradient">{dd.title}</h3>
               <p className="text-sm text-muted-foreground mb-3">
-                <span className="text-chart-3 font-mono">INSIGHT:</span> {project.designDecision.insight}
+                <span className="text-chart-3 font-mono">INSIGHT:</span> {dd.insight}
               </p>
               <p className="text-sm text-muted-foreground">
-                <span className="text-chart-2 font-mono">OUTPUT:</span> {project.designDecision.decision}
+                <span className="text-chart-2 font-mono">OUTPUT:</span> {dd.decision}
               </p>
             </section>
+            ))}
 
             <section>
               <div className="flex items-center gap-3 mb-4">
