@@ -6,6 +6,41 @@ import { X, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { projects, type Project } from "@/lib/data"
 
+/** Renders long-form text with paragraph breaks and optional ALL-CAPS subsection headers */
+function TextBlock({ text, className = "" }: { text: string; className?: string }) {
+  const blocks = text.split("\n\n").filter(Boolean)
+
+  return (
+    <div className={`space-y-4 ${className}`}>
+      {blocks.map((block, i) => {
+        const trimmed = block.trim()
+        // Detect ALL-CAPS lines as subsection headers (e.g. "VISUAL DESIGN — THE COLOR LANGUAGE OF MONEY")
+        const isHeader = /^[A-Z][A-Z0-9 —:&/\-–·,''()]+$/.test(trimmed) && trimmed.length > 5 && trimmed.length < 120
+
+        if (isHeader) {
+          return (
+            <div key={i} className="pt-6 first:pt-0">
+              <div className="flex items-center gap-3 mb-1">
+                <div className="w-6 h-px bg-chart-2/40" />
+                <span className="text-chart-2 text-xs font-mono uppercase tracking-widest">
+                  {trimmed}
+                </span>
+                <div className="flex-1 h-px bg-chart-2/20" />
+              </div>
+            </div>
+          )
+        }
+
+        return (
+          <p key={i} className="text-muted-foreground leading-relaxed">
+            {trimmed}
+          </p>
+        )
+      })}
+    </div>
+  )
+}
+
 function ProjectCard({ project, onClick }: { project: Project; onClick: () => void }) {
   return (
     <motion.article
@@ -197,7 +232,7 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
                 <span className="text-chart-1 font-mono text-sm">[01]</span>
                 <h2 className="font-serif text-2xl chromatic-text">The Problem</h2>
               </div>
-              <p className="text-muted-foreground leading-relaxed pl-10">{project.problem}</p>
+              <TextBlock text={project.problem} className="pl-10" />
             </section>
 
             <section>
@@ -205,7 +240,7 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
                 <span className="text-chart-1 font-mono text-sm">[02]</span>
                 <h2 className="font-serif text-2xl chromatic-text">Research & Discovery</h2>
               </div>
-              <p className="text-muted-foreground leading-relaxed pl-10">{project.research}</p>
+              <TextBlock text={project.research} className="pl-10" />
             </section>
 
             {/* Artifacts - Cyberpunk cards */}
@@ -240,7 +275,7 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
                 <span className="text-chart-1 font-mono text-sm">[04]</span>
                 <h2 className="font-serif text-2xl chromatic-text">Design</h2>
               </div>
-              <p className="text-muted-foreground leading-relaxed pl-10">{project.design}</p>
+              <TextBlock text={project.design} className="pl-10" />
             </section>
 
             {/* Design Decision Callouts - Neon border */}
@@ -270,7 +305,7 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
                 <span className="text-chart-1 font-mono text-sm">[05]</span>
                 <h2 className="font-serif text-2xl chromatic-text">Outcome</h2>
               </div>
-              <p className="text-muted-foreground leading-relaxed pl-10">{project.outcome}</p>
+              <TextBlock text={project.outcome} className="pl-10" />
             </section>
 
             {/* Tools - Neon tags */}
