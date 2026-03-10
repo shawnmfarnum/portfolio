@@ -22,6 +22,7 @@ export interface Project {
     title: string
     insight: string
     decision: string
+    afterHeader?: string
   }[]
   artifacts: {
     type: string
@@ -71,41 +72,49 @@ export const projects: Project[] = [
     designDecisions: [
       {
         title: "Progressive Disclosure as the Primary Interaction Pattern",
+        afterHeader: "INFORMATION ARCHITECTURE",
         insight: "The platform runs each stock through nine analytical layers from six data sources. Showing all of that at once for 20+ stocks in real time would create an interface that serves no one. But hiding layers removes the transparency that builds trust. Users don't want a black-box signal.",
         decision: "I built a three-depth information hierarchy mapped to user personas: a 2-second glanceable dashboard for Scanners, expandable card-level detail for Portfolio Trackers, and full drill-down pages for Signal Hunters. Locked premium layers show blurred values and tier badges instead of disappearing, making the system's depth discoverable and the upgrade path obvious. The tradeoff was more visual complexity on stock cards, but the layered typographic hierarchy ensures each persona reads only as deep as they need."
       },
       {
         title: "OKLCh Color Space for Perceptual Fairness",
+        afterHeader: "VISUAL DESIGN",
         insight: "Traditional HSL-based designs have a hidden problem in financial contexts: a green at 50% lightness looks visually brighter than a red at the same lightness value. That creates unconscious bias toward bullish signals. The BUY badge literally catches the eye more than the SELL badge at identical contrast values.",
         decision: "I built the entire design system on OKLCh (a perceptually uniform color model), defining all theme tokens as CSS custom properties in OKLCh notation. BUY and SELL badges now carry genuinely equal visual weight. Dark mode inverts the lightness channel while preserving chroma and hue, producing a true perceptual inversion instead of a crude color swap. The signal hierarchy stays the same at 2 PM and 11 PM."
       },
       {
         title: "Transparent Paywall Over Hidden Features",
+        afterHeader: "THE TRANSPARENT PAYWALL",
         insight: "Most SaaS products treat their paywall like a gate that slams shut. Locked features just disappear. But in a platform built on transparency ('see why a stock is flagged BUY'), hiding paid features contradicts the core value proposition. Users need to see the full analytical depth to trust the signals.",
         decision: "Locked features are never hidden. A free user sees all nine analysis layers, with locked ones showing a blurred value (say a Gaussian-blurred '8.3' institutional activity score) and the tier required to unlock. The user's brain registers the data is real and computed. Loss aversion makes the absence feel tangible because the presence was already perceived. Three contextual variants (Badge, Card, Inline) adapt the lock presentation to context. Every locked element links to upgrade in a single click."
       },
       {
         title: "Optimistic UI for Financial Trust",
+        afterHeader: "OPTIMISTIC UI",
         insight: "When users are making decisions about money, even a 300ms delay between tap and response introduces doubt: 'Did that work? Should I try again?' Perceived latency directly affects trust. A star that takes half a second to fill feels like a system that might also be slow to execute a trade.",
         decision: "All user-initiated state changes (watchlist toggles, portfolio additions, notification preferences) update the UI instantly with async database writes in the background. If the write fails, the state silently reverts with an error toast. The interface feels as fast as the user's intention. I applied this consistently rather than selectively, because inconsistent response speeds create more anxiety than consistently slow ones."
       },
       {
         title: "Stillness as Feedback in Real-Time Systems",
+        afterHeader: "REAL TIME DATA",
         insight: "Aggressive auto-refresh creates problems that rival stale data: content jumping, lost scroll position, re-sorted cards messing up spatial memory, and a general feeling of instability. A user who remembers 'TSLA was third from the left' shouldn't be disoriented by a background refresh. The refresh itself can be more disruptive than the staleness it's solving.",
         decision: "Auto-refresh runs every 30 seconds with conditional HTTP requests using If-Modified-Since headers. When nothing has changed, the server returns 304 Not Modified and the UI stays perfectly still. No re-render, no flicker. Stillness is itself feedback: nothing new to report. Scroll position and sort order are preserved across updates. Staggered card entrance animations (30ms delay per card) communicate freshness without jarring layout shifts."
       },
       {
         title: "Incremental Commitment for Notification Permissions",
+        afterHeader: "NOTIFICATION DESIGN",
         insight: "Browser notification permissions are a one-shot deal. If the user clicks 'Block,' recovery is painful and buried in browser settings most people will never find. Prompting on first load (as many apps do) wastes that one shot on a user who hasn't built trust yet or even understands what they'd be opting into.",
         decision: "I designed a five-state permission flow (Idle, Checking, Subscribing, Subscribed, Denied/Unsupported) that never prompts on first load. The request only appears inside the notification settings panel, meaning the user already navigated there on their own. Users also configure granularity before granting permission (signal type, confidence threshold, frequency), so they know exactly what they're signing up for. Incremental commitment: users grant access as they build trust."
       },
       {
         title: "Trust Guardrails on AI Predictions",
+        afterHeader: "AI PREDICTIONS",
         insight: "AI-generated price forecasts are the most sensitive feature on the platform. Users might treat predictions as financial advice with real monetary consequences. The design has to prevent overreliance without undermining the feature's usefulness.",
         decision: "Instead of burying disclaimers in terms of service, I built trust calibration directly into the prediction interface. Predictions below 60% confidence render in muted colors with a 'Low Confidence' badge, de-emphasizing uncertain outputs. A trailing accuracy metric anchors expectations to measured performance. Disclaimers are part of the card layout, not hidden in modals. Rate limits prevent compulsive checking and position prediction as a deliberate action rather than a reflex. If you give users a powerful tool, build the guardrails into the interface."
       },
       {
         title: "Cancellation as a Conversation",
+        afterHeader: "PORTFOLIO MANAGEMENT",
         insight: "When a user starts the cancellation flow, most products treat it like a dead end. But that moment is actually a high-signal research opportunity. The user is telling you exactly what failed. Treating churn as logistics wastes the most honest feedback a product ever gets.",
         decision: "The cancellation flow collects the reason via predefined options before routing to the payment portal. Selecting 'Too expensive' dynamically reveals a follow-up: 'What monthly price would feel fair?' This conditional disclosure keeps things clean for most users while pulling high-value retention data from price-sensitive churners. Selecting 'Not using it' surfaces tips about features they may have missed, turning a churn moment into a re-engagement opportunity."
       }

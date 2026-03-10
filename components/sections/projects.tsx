@@ -44,6 +44,126 @@ function TextBlock({ text, className = "" }: { text: string; className?: string 
   )
 }
 
+type DesignDecision = { title: string; insight: string; decision: string; afterHeader?: string }
+
+function DecisionCallout({ dd, index }: { dd: DesignDecision; index: number }) {
+  return (
+    <div className="relative border border-chart-1/40 bg-chart-1/5 p-6 my-6">
+      <div className="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-chart-1" />
+      <div className="absolute top-0 right-0 w-4 h-4 border-r-2 border-t-2 border-chart-2" />
+      <div className="absolute bottom-0 left-0 w-4 h-4 border-l-2 border-b-2 border-chart-2" />
+      <div className="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-chart-1" />
+      <p className="text-chart-1 text-xs font-mono uppercase tracking-widest mb-3">
+        {`// KEY_DECISION_${String(index + 1).padStart(2, '0')}`}
+      </p>
+      <h3 className="font-serif text-xl mb-4 text-gradient">{dd.title}</h3>
+      <p className="text-sm text-muted-foreground mb-3">
+        <span className="text-chart-3 font-mono">INSIGHT:</span> {dd.insight}
+      </p>
+      <p className="text-sm text-muted-foreground">
+        <span className="text-chart-2 font-mono">OUTPUT:</span> {dd.decision}
+      </p>
+    </div>
+  )
+}
+
+/** Like TextBlock but injects design decision callouts after their matching subsection */
+function TextBlockWithDecisions({
+  text,
+  decisions,
+  className = "",
+}: {
+  text: string
+  decisions: DesignDecision[]
+  className?: string
+}) {
+  const blocks = text.split("\n\n").filter(Boolean)
+
+  // Build a map from header text to matching decisions (by afterHeader prefix)
+  const decisionsByHeader: Record<string, { dd: DesignDecision; globalIndex: number }[]> = {}
+  decisions.forEach((dd, i) => {
+    if (dd.afterHeader) {
+      const key = dd.afterHeader.toUpperCase()
+      if (!decisionsByHeader[key]) decisionsByHeader[key] = []
+      decisionsByHeader[key].push({ dd, globalIndex: i })
+    }
+  })
+
+  // Find which header each block index belongs to
+  let currentHeader = ""
+  const blockHeaders: string[] = blocks.map((block) => {
+    const trimmed = block.trim()
+    const isAllCaps = /^[A-Z][A-Z0-9 —:&/\-–·,''()]+$/.test(trimmed) && trimmed.length > 5 && trimmed.length < 120
+    if (isAllCaps) currentHeader = trimmed
+    return currentHeader
+  })
+
+  // Find the last block index for each header group (insert decisions after that block)
+  const lastBlockForHeader: Record<string, number> = {}
+  blockHeaders.forEach((h, i) => {
+    if (h) lastBlockForHeader[h] = i
+  })
+
+  const elements: React.ReactNode[] = []
+  blocks.forEach((block, i) => {
+    const trimmed = block.trim()
+    const isAllCapsHeader = /^[A-Z][A-Z0-9 —:&/\-–·,''()]+$/.test(trimmed) && trimmed.length > 5 && trimmed.length < 120
+    const isSectionLabel = /^[A-Z][A-Za-z0-9 ''&/\-]+:$/.test(trimmed) && trimmed.length > 5 && trimmed.length < 60
+    const isHeader = isAllCapsHeader || isSectionLabel
+
+    if (isHeader) {
+      elements.push(
+        <div key={`h-${i}`} className="pt-6 first:pt-0">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-6 h-px bg-chart-2/40" />
+            <span className="text-chart-2 text-xs font-mono uppercase tracking-widest">
+              {trimmed}
+            </span>
+            <div className="flex-1 h-px bg-chart-2/20" />
+          </div>
+        </div>
+      )
+    } else {
+      elements.push(
+        <p key={`p-${i}`} className="text-muted-foreground leading-relaxed">
+          {trimmed}
+        </p>
+      )
+    }
+
+    // Check if this is the last block under any header that has matching decisions
+    const header = blockHeaders[i]
+    if (header && lastBlockForHeader[header] === i) {
+      // Find decisions whose afterHeader is a prefix of this header
+      Object.entries(decisionsByHeader).forEach(([prefix, dds]) => {
+        if (header.toUpperCase().startsWith(prefix)) {
+          dds.forEach(({ dd, globalIndex }) => {
+            elements.push(<DecisionCallout key={`dd-${globalIndex}`} dd={dd} index={globalIndex} />)
+          })
+        }
+      })
+    }
+  })
+
+  // Render any decisions without a matching header at the end
+  const matchedHeaders = new Set<string>()
+  Object.entries(decisionsByHeader).forEach(([prefix]) => {
+    Object.keys(lastBlockForHeader).forEach((h) => {
+      if (h.toUpperCase().startsWith(prefix)) matchedHeaders.add(prefix)
+    })
+  })
+  decisions.forEach((dd, i) => {
+    if (dd.afterHeader && !matchedHeaders.has(dd.afterHeader.toUpperCase())) {
+      elements.push(<DecisionCallout key={`dd-orphan-${i}`} dd={dd} index={i} />)
+    }
+    if (!dd.afterHeader) {
+      elements.push(<DecisionCallout key={`dd-noanchor-${i}`} dd={dd} index={i} />)
+    }
+  })
+
+  return <div className={`space-y-4 ${className}`}>{elements}</div>
+}
+
 function ProjectCard({ project, onClick }: { project: Project; onClick: () => void }) {
   return (
     <motion.article
@@ -278,30 +398,21 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
                 <span className="text-chart-1 font-mono text-sm">[04]</span>
                 <h2 className="font-serif text-2xl chromatic-text">Design</h2>
               </div>
-              <TextBlock text={project.design} className="pl-10" />
+              {project.designDecisions?.some(dd => dd.afterHeader) ? (
+                <TextBlockWithDecisions
+                  text={project.design}
+                  decisions={project.designDecisions}
+                  className="pl-10"
+                />
+              ) : (
+                <>
+                  <TextBlock text={project.design} className="pl-10" />
+                  {(project.designDecisions ?? [project.designDecision]).map((dd, ddIndex) => (
+                    <DecisionCallout key={ddIndex} dd={dd} index={ddIndex} />
+                  ))}
+                </>
+              )}
             </section>
-
-            {/* Design Decision Callouts - Neon border */}
-            {(project.designDecisions ?? [project.designDecision]).map((dd, ddIndex) => (
-            <section key={ddIndex} className="relative border border-chart-1/40 bg-chart-1/5 p-6 ml-10">
-              {/* Corner accents */}
-              <div className="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-chart-1" />
-              <div className="absolute top-0 right-0 w-4 h-4 border-r-2 border-t-2 border-chart-2" />
-              <div className="absolute bottom-0 left-0 w-4 h-4 border-l-2 border-b-2 border-chart-2" />
-              <div className="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-chart-1" />
-              
-              <p className="text-chart-1 text-xs font-mono uppercase tracking-widest mb-3">
-                {`// KEY_DECISION${(project.designDecisions?.length ?? 0) > 1 ? `_${String(ddIndex + 1).padStart(2, '0')}` : ''}`}
-              </p>
-              <h3 className="font-serif text-xl mb-4 text-gradient">{dd.title}</h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                <span className="text-chart-3 font-mono">INSIGHT:</span> {dd.insight}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                <span className="text-chart-2 font-mono">OUTPUT:</span> {dd.decision}
-              </p>
-            </section>
-            ))}
 
             <section>
               <div className="flex items-center gap-3 mb-4">
