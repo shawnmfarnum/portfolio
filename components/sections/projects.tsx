@@ -14,8 +14,11 @@ function TextBlock({ text, className = "" }: { text: string; className?: string 
     <div className={`space-y-4 ${className}`}>
       {blocks.map((block, i) => {
         const trimmed = block.trim()
-        // Detect ALL-CAPS lines as subsection headers (e.g. "VISUAL DESIGN — THE COLOR LANGUAGE OF MONEY")
-        const isHeader = /^[A-Z][A-Z0-9 —:&/\-–·,''()]+$/.test(trimmed) && trimmed.length > 5 && trimmed.length < 120
+        // Detect ALL-CAPS lines as subsection headers (e.g. "VISUAL DESIGN: THE COLOR LANGUAGE OF MONEY")
+        const isAllCapsHeader = /^[A-Z][A-Z0-9 —:&/\-–·,''()]+$/.test(trimmed) && trimmed.length > 5 && trimmed.length < 120
+        // Detect short mixed-case lines ending in colon as section labels (e.g. "What's Next:")
+        const isSectionLabel = /^[A-Z][A-Za-z0-9 ''&/\-]+:$/.test(trimmed) && trimmed.length > 5 && trimmed.length < 60
+        const isHeader = isAllCapsHeader || isSectionLabel
 
         if (isHeader) {
           return (
