@@ -30,7 +30,7 @@ echo -e "  ${DIM}Bozeman, MT · 45.6770°N, 111.0429°W${NC}"
 echo ""
 
 # Open portfolio in default browser
-URL="https://shawnfarnum.com"
+URL="https://portfolio-two-coral-84.vercel.app"
 
 if command -v xdg-open &> /dev/null; then
   xdg-open "$URL" &> /dev/null &
