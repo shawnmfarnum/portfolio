@@ -8,25 +8,21 @@ import { useEffect, useState } from "react"
 
 const skillsList = [
   // Development
-  "Three.js", "Node.js", "HTML5", "CSS", "JavaScript", "Bootstrap", "HTML", "HTML + CSS",
-  "Front-End Development", "Web Development", "Web Standards",
+  "React", "Next.js", "TypeScript", "Node.js", "Three.js", "HTML5", "CSS", "JavaScript",
+  "React Native", "Python", "Tailwind CSS",
   // Design & UX
-  "User Interface Design", "Interaction Design", "UX Design", "User Experience Design",
-  "User Experience (UX)", "Usability", "Wireframing", "User Flows", "User Persona's",
-  "Prototyping", "Interactive Prototyping", "Software Prototyping", "A/B Testing",
-  "Web Design", "Graphic Design", "Logo Design", "Graphics",
+  "UI/UX Design", "Interaction Design", "User Research", "Usability Testing",
+  "Wireframing", "Prototyping", "Design Systems", "A/B Testing",
+  "Information Architecture", "Accessibility", "Progressive Disclosure",
   // Tools
-  "Photoshop", "Adobe Creative Suite", "Adobe Illustrator", "Adobe InDesign", "Adobe Photoshop",
-  "Sketch App", "Lean Canvas",
-  // Marketing & Social
-  "Online Marketing", "Social Media", "Social Media Marketing", "Social Networking",
-  "Creative Marketing", "Facebook", "Digital Photography",
-  // Business & Problem Solving
-  "Entrepreneur", "Creative Problem Solving", "Problem Solving", "Communication",
-  "Web Project Management", "Website Building", "User Requirements",
-  // IT
-  "Information Technology", "IT Service Management", "IT Operations", "Service Desk",
-  "Troubleshooting", "Computer Hardware", "Mac OS X",
+  "Figma", "Adobe Creative Suite", "Radix UI", "Storybook",
+  // Research & HCI
+  "HCI Research", "Contextual Inquiry", "Affinity Mapping", "Cognitive Load Theory",
+  "User Personas", "Mixed Methods Research",
+  // Data & Infrastructure
+  "Supabase", "PostgreSQL", "Vercel", "Stripe", "REST APIs",
+  // Core Strengths
+  "Design-to-Code", "Product Thinking", "Systems Thinking",
 ]
 
 // Distribute skills across the full background

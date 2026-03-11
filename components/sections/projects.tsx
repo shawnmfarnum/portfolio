@@ -312,7 +312,14 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
 
           {/* Title with chromatic effect */}
           <h1 className="font-serif text-3xl md:text-4xl mb-4 chromatic-text">{project.title}</h1>
-          <p className="text-xl text-muted-foreground mb-8">{project.description}</p>
+          <p className="text-xl text-muted-foreground mb-4">{project.description}</p>
+
+          {/* Minto Pyramid Lead — the answer/outcome shown first */}
+          {project.lead && (
+            <div className="relative border-l-2 border-chart-2/40 pl-6 mb-8">
+              <p className="text-muted-foreground leading-relaxed">{project.lead}</p>
+            </div>
+          )}
 
           {/* Quick Stats - Terminal style */}
           <div className="bg-card border border-chart-2/30 mb-12 overflow-hidden">
@@ -353,7 +360,7 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
             <section>
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-chart-1 font-mono text-sm">[01]</span>
-                <h2 className="font-serif text-2xl chromatic-text">The Problem</h2>
+                <h2 className="font-serif text-2xl chromatic-text">{project.sectionHeadings?.problem ?? "The Problem"}</h2>
               </div>
               <TextBlock text={project.problem} className="pl-10" />
             </section>
@@ -361,16 +368,16 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
             <section>
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-chart-1 font-mono text-sm">[02]</span>
-                <h2 className="font-serif text-2xl chromatic-text">Research & Discovery</h2>
+                <h2 className="font-serif text-2xl chromatic-text">{project.sectionHeadings?.research ?? "Research & Discovery"}</h2>
               </div>
               <TextBlock text={project.research} className="pl-10" />
             </section>
 
-            {/* Artifacts - Cyberpunk cards */}
+            {/* Artifacts */}
             <section>
               <div className="flex items-center gap-3 mb-6">
                 <span className="text-chart-1 font-mono text-sm">[03]</span>
-                <h2 className="font-serif text-2xl chromatic-text">Process Artifacts</h2>
+                <h2 className="font-serif text-2xl chromatic-text">{project.sectionHeadings?.artifacts ?? "Process Artifacts"}</h2>
               </div>
               <div className="grid md:grid-cols-3 gap-4 pl-10">
                 {project.artifacts.map((artifact, index) => (
@@ -396,7 +403,7 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
             <section>
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-chart-1 font-mono text-sm">[04]</span>
-                <h2 className="font-serif text-2xl chromatic-text">Design</h2>
+                <h2 className="font-serif text-2xl chromatic-text">{project.sectionHeadings?.design ?? "Design"}</h2>
               </div>
               {project.designDecisions?.some(dd => dd.afterHeader) ? (
                 <TextBlockWithDecisions
@@ -417,7 +424,7 @@ function CaseStudyModal({ project, onClose }: { project: Project; onClose: () =>
             <section>
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-chart-1 font-mono text-sm">[05]</span>
-                <h2 className="font-serif text-2xl chromatic-text">Outcome</h2>
+                <h2 className="font-serif text-2xl chromatic-text">{project.sectionHeadings?.outcome ?? "Outcome"}</h2>
               </div>
               <TextBlock text={project.outcome} className="pl-10" />
             </section>

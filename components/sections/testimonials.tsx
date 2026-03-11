@@ -11,6 +11,9 @@ export function Testimonials() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
+  // Hide section entirely when no testimonials exist
+  if (testimonials.length === 0) return null
+
   const next = () => {
     setCurrentIndex((prev) => (prev + 1) % testimonials.length)
   }
@@ -81,10 +84,14 @@ export function Testimonials() {
                     &ldquo;{testimonials[currentIndex].quote}&rdquo;
                   </blockquote>
                   <div>
-                    <p className="font-mono text-chart-2 uppercase tracking-wider">{testimonials[currentIndex].name}</p>
-                    <p className="text-sm text-muted-foreground font-mono">
-                      {testimonials[currentIndex].title} @ {testimonials[currentIndex].company}
-                    </p>
+                    {testimonials[currentIndex].name && (
+                      <p className="font-mono text-chart-2 uppercase tracking-wider">{testimonials[currentIndex].name}</p>
+                    )}
+                    {(testimonials[currentIndex].title || testimonials[currentIndex].company) && (
+                      <p className="text-sm text-muted-foreground font-mono">
+                        {[testimonials[currentIndex].title, testimonials[currentIndex].company].filter(Boolean).join(" @ ")}
+                      </p>
+                    )}
                   </div>
                 </motion.div>
               </AnimatePresence>
