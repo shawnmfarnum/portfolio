@@ -17,7 +17,6 @@ import { MatrixRain } from "@/components/matrix-rain"
 import { LightFlash } from "@/components/light-flash"
 import { PortalEasterEgg } from "@/components/portal-easter-egg"
 import { CompanionCube } from "@/components/companion-cube"
-import { PortalTurret } from "@/components/portal-turret"
 import { SpaceCore } from "@/components/space-core"
 import { CaveJohnson } from "@/components/cave-johnson"
 import { PortalTransition } from "@/components/portal-transition"
@@ -50,7 +49,6 @@ export default function Home() {
       <LightFlash />
       <PortalEasterEgg />
       <CompanionCube />
-      <PortalTurret />
       <SpaceCore />
       <CaveJohnson />
       <PortalTransition />
